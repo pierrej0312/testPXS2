@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ad.size" content="width=970,height=250">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;800&display=swap');
+
+        html {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .Ad-container {
+            width: 970px;
+            height: 250px;
+            position: relative;
+            background-color: #F0E7D8;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1,
+        h2,
+        p,
+        ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        p {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn {
+            padding: 1em 2em;
+            font-size: 15px;
+            cursor: pointer;
+            background: none;
+            border-radius: 6px;
+            margin: 0;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            transition: all 300ms ease-in-out;
+        }
+
+        .btn .overlay {
+            font-size: 15px;
+            z-index: 999;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            transition: all 300ms ease-in-out;
+            background: black;
+            -webkit-clip-path: circle(0.0% at 50% 100%);
+            clip-path: circle(0.0% at 50% 100%);
+        }
+
+        .btn:hover .overlay,
+        .btn:focus .overlay {
+            -webkit-clip-path: circle(111.7% at 50% 100%);
+            clip-path: circle(111.7% at 50% 100%);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .button-list {
+            display: flex;
+            gap: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .button-list p {
+            font-size: 40px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            position: absolute;
+            top: 250%;
+            left: 0;
+            transform: translate(-0%, -50%);
+            transition: all 300ms ease-in-out;
+        }
+
+        .button-list.send p {
+            top: 50%;
+        }
+
+        .button-list.send .btn {
+            transform: translateY(-150%);
+        }
+
+        img {
+            position: absolute;
+            bottom: -40px;
+            right: -40px;
+            width: 40%;
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="Ad-container">
+        <div class="content">
+            <h1>Ceci n'est pas une pub !</h1>
+            <h2>Êtes-vous actuellement à moins de 5km de ce bâtiment ?</h2>
+            <div class="button-list">
+                <button class="btn" onclick="SendResponse('Yes')">OUI<p class="overlay">OUI</p></button>
+                <button class="btn" onclick="SendResponse('No')">NON<p class="overlay">NON</p></button>
+                <p>Merci !</p>
+            </div>
+            <p>*Ceci est une enquête de population</p>
+        </div>
+        <img src="src/Avignon.svg">
+    </div>
+
+</body>
+<script>
+    function SendResponse(response) {
+        window.open("merci.html", "_blank");
+        document.querySelector(".button-list").classList.add('send');
+    }
+</script>
+<script>
+    //à supprimer si pas de smart trafic
+
+
+    // listener sur l'event message
+    window.addEventListener('message', function (event) {
+        const { data } = event;
+        const { host } = event.srcElement.location;
+        // on verifie que le host de la source vient bien de chez proxi
+        if (host === 'proximedia.s3.eu-central-1.amazonaws.com' || host === 'images.proxistore.com' && data.advertisementId) {
+            document.body.addEventListener('click', function () {
+                // en cas de click on appelle notre be pour qu'il incrémente les clicks
+                /*ajax(
+                    `//abs.proxistore.com/fr/tags/click/${data.advertisementId}`,
+                    'PUT',
+                    JSON.stringify({
+                        publisherSpotReferenceId: data.publisherSpotReferenceId,
+                        campaignId: data.campaignId,
+                        dealId: data.dealId
+                    }),
+                    'application/json; charset=utf-8'
+                );
+                // changer l'url par celle envoyer par le client 
+                window.open(data.urlRedirection) /*quand pas smart trafic*/
+            });
+        }
+    });
+
+    function ajax(url, method, data) {
+        return new Promise(function (resolve, reject) {
+            const request = new XMLHttpRequest();
+            request.onreadystatechange = function () {
+                if (request.readyState === XMLHttpRequest.DONE) {
+                    if (request.status >= 200 && request.status < 300) {
+                        resolve(request.responseText);
+                    } else {
+                        reject(Error(request.statusText));
+                    }
+                }
+            };
+            request.onerror = function () {
+                reject(Error('Network Error'));
+            };
+            request.withCredentials = true;
+            request.open(method, url, true);
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.send(data);
+        });
+    }
+</script>
+
+</html>
